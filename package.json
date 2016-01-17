@@ -1,0 +1,35 @@
+{
+  "name": "express-server-status",
+  "version": "1.0.0",
+  "description": "Get a quick overview of the status of an express server (uptime, version, git sha, stats)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenCollective/express-server-status.git"
+  },
+  "keywords": [
+    "express",
+    "expressjs",
+    "stats",
+    "status",
+    "git",
+    "uptime",
+    "version"
+  ],
+  "author": "Xavier Damman (@xdamman)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OpenCollective/express-server-status/issues"
+  },
+  "homepage": "https://github.com/OpenCollective/express-server-status#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "moment": "^2.11.1"
+  }
+}
