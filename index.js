@@ -1,3 +1,4 @@
+var os = require('os');
 var moment = require('moment');
 var requests = { total: 0 };
 var requests_per_minute = [];
@@ -66,15 +67,28 @@ module.exports = function(app, options) {
     } 
     
     var minute = (new Date).getMinutes();
+    server.started_at = moment(uptime_start);
     server.uptime = Math.round((new Date() - uptime_start) / 1000);
     server.uptime_human = moment(uptime_start).fromNow();
+    server.env = process.env.NODE_ENV;
+     
+    var node = {
+      version: process.version,
+      memoryUsage: Math.round(process.memoryUsage().rss / 1024 / 1024) + 'M',
+      uptime: process.uptime()
+    };
+    var system = {
+      loadavg: os.loadavg(),
+      freeMemory: Math.round(os.freemem() / 1024 / 1024) + 'M',
+      hostname: os.hostname()
+    };
      
     // requests.per_minute = requests_per_minute;
     requests.last_minute = sum(requests_per_minute, minute, 1);
     requests.last_5mn_avg = sum(requests_per_minute, minute, 5);
     requests.last_15mn_avg = average(requests_per_minute, 0, 15);
     server.requests = requests;
-    const status = { server, git: git_data };
+    const status = { server, git: git_data, node, system };
     
     res.send(status);
     
