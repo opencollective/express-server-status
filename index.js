@@ -1,3 +1,4 @@
+var path = require('path');
 var os = require('os');
 var moment = require('moment');
 var requests = { total: 0 };
@@ -40,10 +41,11 @@ module.exports = function(app, options) {
   var server = { status: "up" };
   
   try {
-    var package = require.main.require('./package.json');
-    server.description = package.description;
-    server.version = package.version;
-  } catch(e) {}
+    var pkgfile = path.resolve(__dirname, './package.json');
+    var pkg = require(pkgfile);
+    server.name = pkg.name;
+    server.version = pkg.version;
+  } catch(e) { console.error("express-server-status> Error loading " + pkgfile, e); }
   
   app.get('*', function(req, res, next) {
     requests.total++;
