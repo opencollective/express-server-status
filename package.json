@@ -1,6 +1,6 @@
 {
   "name": "express-server-status",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Get a quick overview of the status of an express server (uptime, version, git sha, stats)",
   "main": "index.js",
   "directories": {
