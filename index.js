@@ -1,5 +1,6 @@
 var path = require('path');
 var os = require('os');
+var fs = require('fs');
 var moment = require('moment');
 var requests = { total: 0 };
 var requests_per_minute = [];
@@ -39,13 +40,19 @@ setInterval(resetCounter, 60*1000);
 module.exports = function(app, options) {
   
   var server = { status: "up" };
-  
+ 
+  var filepath = "package.json";
+  var i = 0;
+  do {
+    filepath = require.main.paths[i++].replace(/\/[^\/]*$/,'/') + "package.json";
+  }
+  while(!fs.existsSync(filepath) && i < require.main.paths.length);
+
   try {
-    var pkgfile = path.resolve(__dirname, './package.json');
-    var pkg = require(pkgfile);
+    var pkg = require(filepath);
     server.name = pkg.name;
     server.version = pkg.version;
-  } catch(e) { console.error("express-server-status> Error loading " + pkgfile, e); }
+  } catch(e) { console.error("express-server-status> Error loading " + filepath, e); }
   
   app.get('*', function(req, res, next) {
     requests.total++;
