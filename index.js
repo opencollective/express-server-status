@@ -14,7 +14,7 @@ var git_data = { };
 exec(__dirname+'/lib/get_git_data.sh', function(err, res, stderr) {
   var cols = res.trim().split(',');
   git_data.branch = cols[0];
-  git_data.sha = cols[1].substr(0,7);
+  git_data.sha = cols[1] && cols[1].substr(0,7);
 });
 
 var sum = function(arr, from, length) {
@@ -38,9 +38,9 @@ var resetCounter = function() {
 setInterval(resetCounter, 60*1000);
 
 module.exports = function(app, options) {
-  
+
   var server = { status: "up" };
- 
+
   var filepath = "package.json";
   var i = 0;
   do {
@@ -53,19 +53,19 @@ module.exports = function(app, options) {
     server.name = pkg.name;
     server.version = pkg.version;
   } catch(e) { console.error("express-server-status> Error loading " + filepath, e); }
-  
+
   app.get('*', function(req, res, next) {
     requests.total++;
     var minute = (new Date).getMinutes();
     requests_per_minute[minute]++;
     return next();
   });
-  
+
   return function(req, res, next) {
-    
+
     req.stats = {}
     req.stats.start = new Date;
-       
+
     // decorate response#end method from express
     var end = res.end;
     res.end = function () {
@@ -73,14 +73,14 @@ module.exports = function(app, options) {
       // call to original express#res.end()
       res.setHeader('X-Response-Time', req.stats.responseTime);
       end.apply(res, arguments);
-    } 
-    
+    }
+
     var minute = (new Date).getMinutes();
     server.started_at = moment(uptime_start);
     server.uptime = Math.round((new Date() - uptime_start) / 1000);
     server.uptime_human = moment(uptime_start).fromNow();
     server.env = process.env.NODE_ENV;
-     
+
     var node = {
       version: process.version,
       memoryUsage: Math.round(process.memoryUsage().rss / 1024 / 1024) + 'M',
@@ -91,16 +91,16 @@ module.exports = function(app, options) {
       freeMemory: Math.round(os.freemem() / 1024 / 1024) + 'M',
       hostname: os.hostname()
     };
-     
+
     // requests.per_minute = requests_per_minute;
     requests.last_minute = sum(requests_per_minute, minute, 1);
     requests.last_5mn_avg = sum(requests_per_minute, minute, 5);
     requests.last_15mn_avg = average(requests_per_minute, 0, 15);
     server.requests = requests;
     const status = { server, git: git_data, node, system };
-    
+
     res.send(status);
-    
+
   };
-  
+
 }
