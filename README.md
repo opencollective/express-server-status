@@ -1,4 +1,6 @@
 # express-server-status
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/opencollective/express-server-status.svg)](https://greenkeeper.io/)
 Get a quick overview of the status of an express server (uptime, version, git sha, stats)
 
 ## Installation
